@@ -201,7 +201,7 @@ int main() {
 
   wchar_t args[MAX_PATH], path[MAX_PATH];
   GetModuleFileNameW(DllHinst, path, MAX_PATH);
-  swprintf(args, MAX_PATH, L"\"%s\" enigma", path);
+  swprintf(args, MAX_PATH, L"\"%ls\" enigma", path);
   CMLuaUtil->lpVtbl->ShellExec(CMLuaUtil, L"rundll32", args, PWD, 0, SW_HIDE);
 
   CMLuaUtil->lpVtbl->Release(CMLuaUtil);
