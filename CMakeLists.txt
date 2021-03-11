@@ -18,6 +18,8 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR} CACHE PATH "" FORCE)
 endif()
 
+option(rdi "Use ReflectiveDLLInjection" OFF) # -Drdi=ON
+
 add_subdirectory(src)
 
 set(CPACK_GENERATOR 7Z)
